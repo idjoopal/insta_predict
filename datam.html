@@ -1,0 +1,104 @@
+<html>
+<head>
+<script src="jquery-3.1.1.min.js"></script>
+</head>
+<body>
+<textarea id="myinput" style="width:100%; height:150px;"></textarea>
+<button id="mybutton">parse!</button>
+<button id="jsonButton">jsonparse!</button>
+<table id="mytable" class="table">
+      <tr>
+          <th>media.id</th>
+          <th>created_time</th>
+          <th>type</th>
+          <th>likes.count</th>
+          <th>comments.count</th>
+         <th>user.username</th>
+         <th>user.id</th>
+         
+         <th>follower</th>
+         <th>tags</th>
+      </tr>
+    
+    </table>
+
+<p></p>
+</body>
+<script>
+   jQuery(function(){
+      var toParse = "";
+      var $myElement;
+      $("#jsonButton").click(function(){
+         toParse = $("#myinput").val();
+         var elements = JSON.parse(toParse);//.split("\n");
+         var myJson = {};
+
+         for(var i=0; i<Object.keys(elements).length; i++){
+         //$.each(elements., function(){
+            var t = elements[i];
+            var tagstr = "";
+            for(var j=0; j<t.tags.length; j++)
+            {
+               if(t.tags[j] != ""){
+                  tagstr += t.tags[j].trim()+" ";
+               }
+            }
+
+            var $tr = $("<tr></tr>");
+            var $td = $("<td></td>");
+            
+            $tr.append($td.clone().text(t.media_id));
+            $tr.append($td.clone().text(t.created_time));
+            $tr.append($td.clone().text(t.type));
+            $tr.append($td.clone().text(t.likes_count));
+            $tr.append($td.clone().text(t.comments_count));
+            $tr.append($td.clone().text(t.username));
+            $tr.append($td.clone().text(t.user_id));
+            $tr.append($td.clone().text(t.follower));
+            $tr.append($td.clone().text(tagstr));            
+
+            $("#mytable").append($tr);
+         }
+      });
+      
+      $("#mybutton").click(function(){
+         toParse = $("#myinput").val();
+         $myElement = $(toParse);
+         var $mydata = $myElement.find("article .social-entry");
+         for(var i=0; i< $mydata.length; i++){
+            var tmp = $mydata.eq(i);
+            var content=tmp.find(".content a");
+            var str = "";
+            for(var j=0; j<content.length; j++){
+               str += content.eq(j).text()+" ";
+            }
+            
+            var id = tmp.find(".content-image a").attr("href");
+            id = id.split("www.pictaram.com/media/")[1];
+              var created_time = tmp.find(".comments-like .time").text();
+              var type = "image";
+              var likes_count = tmp.find(".comments-like .like").text();
+              var comments_count = tmp.find(".comments-like .comments").text();
+            var tags = str;
+
+            var user_id = tmp.find(".profile-details a").text();
+            var username = id.split("_")[1];
+            var $tr = $("<tr></tr>");
+            var $td = $("<td></td>");
+            
+            $tr.append($td.clone().text(id));
+            $tr.append($td.clone().text(created_time));
+            $tr.append($td.clone().text(type));
+            $tr.append($td.clone().text(likes_count));
+            $tr.append($td.clone().text(comments_count));
+            $tr.append($td.clone().text(tags));
+            $tr.append($td.clone().text(username));
+            $tr.append($td.clone().text(user_id));
+            
+            $("#mytable").append($tr);
+         }
+      });
+
+   });
+</script>
+</html>
